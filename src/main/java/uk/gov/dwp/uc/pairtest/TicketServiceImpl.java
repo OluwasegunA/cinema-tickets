@@ -1,7 +1,9 @@
 package uk.gov.dwp.uc.pairtest;
 
 import thirdparty.paymentgateway.TicketPaymentService;
+import thirdparty.paymentgateway.TicketPaymentServiceImpl;
 import thirdparty.seatbooking.SeatReservationService;
+import thirdparty.seatbooking.SeatReservationServiceImpl;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 
@@ -13,9 +15,9 @@ public class TicketServiceImpl implements TicketService {
     private final SeatReservationService seatReservationService;
     private final TicketPaymentService ticketPaymentService;
 
-    public TicketServiceImpl (SeatReservationService seatReservationService, TicketPaymentService ticketPaymentService){
-        this.seatReservationService = seatReservationService;
-        this.ticketPaymentService = ticketPaymentService;
+    public TicketServiceImpl (SeatReservationServiceImpl seatReservationServiceImpl, TicketPaymentServiceImpl ticketPaymentServiceImpl){
+        this.seatReservationService = seatReservationServiceImpl;
+        this.ticketPaymentService = ticketPaymentServiceImpl;
     }
 
     @Override
@@ -33,8 +35,8 @@ public class TicketServiceImpl implements TicketService {
         int totalPayableAmount = CalculateTotalAmountToPay(ticketTypeRequests);
 
         if (totalSeats != 0 && totalPayableAmount != 0){
-            seatReservationService.reserveSeat(accountId, totalSeats);
             ticketPaymentService.makePayment(accountId, totalPayableAmount);
+            seatReservationService.reserveSeat(accountId, totalSeats);
         }
 
     }
